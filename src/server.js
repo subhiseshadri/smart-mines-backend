@@ -23,17 +23,15 @@ const meetRoutes = require('./routes/meetRoutes');
 
 
 
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
-  }
-});
-
-app.use(cors({
+const corsOptions = {
   origin: ['https://vermilion-mermaid-e5718e.netlify.app', 'http://localhost:3000'],
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
 app.use(express.json());
 
 // API Routes
