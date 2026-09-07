@@ -1,0 +1,190 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  REVIEWER
+}
+
+enum TaskStatus {
+  TODO
+  WORKING
+  REVIEW
+  DONE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  username      String         @unique
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(STUDENT)
+  status        UserStatus     @default(ACTIVE)
+  profilePhoto  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  tasks         Task[]         @relation("AssignedTasks")
+  messages      Message[]
+  files         File[]
+  bugs          Bug[]
+  notifications Notification[]
+}
+
+model Task {
+  id           String     @id @default(uuid())
+  title        String
+  description  String?
+  assignedToId String
+  assignedTo   User       @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  deadline     DateTime?
+  status       TaskStatus @default(TODO)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  senderId      String
+  sender        User     @relation(fields: [senderId], references: [id])
+  messageText   String
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+}
+
+model File {
+  id           String   @id @default(uuid())
+  fileName     String
+  fileType     String
+  fileSize     Int
+  cloudUrl     String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model GitHubRepo {
+  id             String   @id @default(uuid())
+  repoName       String
+  description    String?
+  repoUrl        String
+  assignedModule String
+  createdAt      DateTime @default(now())
+}
+
+model Bug {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  module        String
+  screenshotUrl String?
+  reportedById  String
+  reportedBy    User     @relation(fields: [reportedById], references: [id])
+  status        String   @default("Open")
+  createdAt     DateTime @default(now())
+}
+
+model WeeklyUpdate {
+  id          String   @id @default(uuid())
+  completed   String
+  workingOn   String
+  blockers    String
+  nextWeek    String
+  submittedBy String   @default("Student")
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  userId    String?  // Make optional
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model ProjectFile {
+  id         String   @id @default(uuid())
+  name       String
+  size       String   @default("1.0 MB")
+  fileType   String   @default("application/pdf")
+  fileData   Bytes?
+  uploadedBy String
+  createdAt  DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  action    String
+  username  String
+  createdAt DateTime @default(now())
+}
+
+model ProblemReport {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  module      String
+  status      String   @default("Open")
+  submittedBy String
+  createdAt   DateTime @default(now())
+}
+
+model ProjectModule {
+  id         String   @id @default(uuid())
+  moduleName String   @unique
+  progress   Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+model TeamInfo {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  memberRole  String
+  updatedAt   DateTime @updatedAt
+}
+
+model Problem {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  module      String
+  status      String   @default("Open")
+  submittedBy String
+  createdAt   DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  sender    String
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model WeeklyMeet {
+  id          String   @id @default(uuid())
+  meetUrl     String   @default("")
+  scheduledAt String   @default("Not Scheduled")
+  agenda      String   @default("Weekly Project Review & Presentation")
+  updatedAt   DateTime @updatedAt
+}
