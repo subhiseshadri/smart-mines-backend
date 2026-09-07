@@ -7,6 +7,14 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
+// Initialize Socket.io server here
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
+  }
+});
+
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const fileRoutes = require('./routes/fileRoutes');
@@ -19,9 +27,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const meetRoutes = require('./routes/meetRoutes');
-
-
-
+const teamRoutes = require('./routes/teamRoutes');
 
 const corsOptions = {
   origin: ['https://vermilion-mermaid-e5718e.netlify.app', 'http://localhost:3000'],
@@ -47,6 +53,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/updates', updateRoutes);
 app.use('/api/meet', meetRoutes);
+app.use('/api/team', teamRoutes);
 
 // Socket.IO Real-Time Connection
 io.on('connection', (socket) => {
@@ -60,9 +67,6 @@ io.on('connection', (socket) => {
     console.log(`User disconnected: ${socket.id}`);
   });
 });
-
-const teamRoutes = require('./routes/teamRoutes');
-app.use('/api/team', teamRoutes);
 
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => {
