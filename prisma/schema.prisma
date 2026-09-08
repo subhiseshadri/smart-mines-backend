@@ -82,6 +82,7 @@ model GitHubRepo {
   repoUrl        String
   assignedModule String
   createdAt      DateTime @default(now())
+  @@map("GitHubRepo")
 }
 
 model Bug {
