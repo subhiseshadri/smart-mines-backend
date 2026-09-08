@@ -30,7 +30,7 @@ const meetRoutes = require('./routes/meetRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 
 const corsOptions = {
-  origin: ['https://vermilion-mermaid-e5718e.netlify.app', 'http://localhost:3000'],
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
