@@ -7,10 +7,11 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
-// Initialize Socket.io server here
+// Initialize Socket.io server with explicit Netlify origin and credentials
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: ['https://vermilion-mermaid-e5718e.netlify.app', 'http://localhost:3000'],
+    credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
   }
 });
