@@ -7,10 +7,12 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
-// Initialize Socket.io server with origin: true to match express cors and allow credentials
+// Initialize Socket.io server with function callback for CORS to support dynamic origins and credentials
 const io = new Server(server, {
   cors: {
-    origin: true,
+    origin: (origin, callback) => {
+      callback(null, true);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
   }
